@@ -7,6 +7,9 @@ calls, the app).
 
 ## Status: walkthrough loop working (local)
 
+Light theme — warm-neutral palette (cream page, white panels, brown accent)
+defined as tokens in `src/index.css`.
+
 Built and verified against the stub sheet:
 
 - **Data seam** &mdash; `src/data.js` &rarr; `getPages()`: runtime CSV fetch +

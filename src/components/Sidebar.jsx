@@ -23,7 +23,10 @@ export default function Sidebar({ nav, currentId, currentSection, onJump }) {
         {nav.map((group) => {
           const isOpen = open === group.section;
           return (
-            <li key={group.section} className="navgroup">
+            <li
+              key={group.section}
+              className={'navgroup' + (isOpen ? ' is-open' : '')}
+            >
               <div
                 className={
                   'navgroup__head' +
