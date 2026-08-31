@@ -5,22 +5,32 @@ dashboard &mdash; a walkthrough people tap through to feel what a prospective or
 existing client's path looks like across entry points (search, social, referral,
 calls, the app).
 
-## Status: scaffold only
+## Status: walkthrough loop working (local)
 
-Done in this pass:
+Built and verified against the stub sheet:
 
-- Vite + React project, brand-styled (bg `#111213`, gold `#C9A84C`, DM Sans).
-- `src/data.js` &rarr; `getPages()`: the single data-access seam. Fetches the
-  published Google Sheet CSV at runtime and parses it with PapaParse. Nav, page
-  render and CTA buttons will all consume its output and never touch the network
-  or CSV format themselves.
-- `src/config.js`: the CSV URL and media base path &mdash; the only things to
-  change to repoint the walkthrough.
-- Bare-bones `App.jsx` that verifies the pipeline (loads the sheet, reports row
-  and Meta Section counts).
+- **Data seam** &mdash; `src/data.js` &rarr; `getPages()`: runtime CSV fetch +
+  PapaParse. The only place the app knows where data lives.
+- **Left nav** &mdash; one collapsible group per Meta Section, order taken from
+  the sheet. Section name teleports to that section's Entry Point row.
+- **Page render** &mdash; title, body, CTA row, media.
+- **CTA navigation** &mdash; button label is the target row's Event Name, looked
+  up automatically. A CTA pointing at an id not in the sheet renders disabled
+  ("&hellip; &middot; coming soon").
+- **Media cycling** &mdash; click the frame or the side arrows to advance;
+  loops. Arrows + counter appear only with 2+ images. Missing files show the
+  filename instead of a broken image.
+- **Breadcrumb + URL state** &mdash; visited path as crumbs (click one to trim
+  back), "Start over" resets to the default entry. Current page is in the URL
+  as `?page=<id>`; Back/Forward and bookmarking work.
 
-Not built yet: left nav, entry-page render, CTA navigation, media cycling,
-breadcrumb / "start over", `?page=` URL state, device-frame media chrome.
+Not built: browser-chrome device frames around the media (plain image for now).
+
+### Known: fix the sheet's `Media` column
+
+Cells currently use `gmb1.png, gmb2.png, ...` (commas). The parser splits on
+`|` per the brief, so today each cell is read as one filename and cycling can't
+kick in. Change those cells to `gmb1.png|gmb2.png|gmb3.png|gmb4.png`.
 
 ## Run locally
 

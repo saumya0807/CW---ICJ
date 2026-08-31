@@ -1,44 +1,74 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getPages } from './data.js';
+import { buildNav, getPage } from './nav.js';
+import { useJourney } from './useJourney.js';
+import Sidebar from './components/Sidebar.jsx';
+import Breadcrumb from './components/Breadcrumb.jsx';
+import PageView from './components/PageView.jsx';
 import './App.css';
 
-// Scaffold pass: this screen only proves the data pipeline reaches the published
-// sheet. The walkthrough itself (left nav, entry-page render, CTA navigation,
-// media cycling, breadcrumb, ?page= URL state) is not built yet.
 export default function App() {
-  const [status, setStatus] = useState({ state: 'loading' });
+  const [load, setLoad] = useState({ state: 'loading' });
 
   useEffect(() => {
+    let alive = true;
     getPages()
-      .then((pages) => setStatus({ state: 'ok', pages }))
-      .catch((err) => setStatus({ state: 'error', message: err.message }));
+      .then((pages) => {
+        if (!alive) return;
+        setLoad(
+          pages.length
+            ? { state: 'ok', pages }
+            : { state: 'error', message: 'The sheet has no rows.' },
+        );
+      })
+      .catch((err) => alive && setLoad({ state: 'error', message: err.message }));
+    return () => {
+      alive = false;
+    };
   }, []);
 
+  if (load.state === 'loading') return <Splash>Loading the walkthrough…</Splash>;
+  if (load.state === 'error') {
+    return <Splash tone="error">Couldn’t load the walkthrough: {load.message}</Splash>;
+  }
+  return <Walkthrough pages={load.pages} />;
+}
+
+function Walkthrough({ pages }) {
+  const nav = useMemo(() => buildNav(pages), [pages]);
+  const { currentId, trail, go, jumpTo, truncateTo, startOver } = useJourney(pages);
+
+  const page =
+    getPage(pages, currentId) || getPage(pages, trail[0]) || pages[0];
+
+  return (
+    <div className="app">
+      <Sidebar
+        nav={nav}
+        currentId={page.id}
+        currentSection={page.metaSection}
+        onJump={jumpTo}
+      />
+      <main className="main">
+        <div className="main__bar">
+          <Breadcrumb trail={trail} pages={pages} onCrumb={truncateTo} />
+          <button type="button" className="startover" onClick={startOver}>
+            Start over
+          </button>
+        </div>
+        <PageView page={page} pages={pages} onCta={go} />
+      </main>
+    </div>
+  );
+}
+
+function Splash({ children, tone }) {
   return (
     <main className="shell">
-      <div className="card">
+      <div className={'card' + (tone === 'error' ? ' card--error' : '')}>
         <p className="eyebrow">Cambridge Wealth</p>
         <h1>ICJ Interactive Walkthrough</h1>
-        <p className="lede">
-          Scaffold in place. This screen only verifies that the app can reach the
-          published Google Sheet and parse it &mdash; the interactive walkthrough
-          is the next build pass.
-        </p>
-
-        <div className={`probe probe--${status.state}`}>
-          {status.state === 'loading' && 'Contacting the published Google Sheet…'}
-          {status.state === 'ok' && (
-            <>
-              Connected. <strong>{status.pages.length}</strong> pages loaded across{' '}
-              <strong>
-                {new Set(status.pages.map((p) => p.metaSection)).size}
-              </strong>{' '}
-              Meta Sections (
-              {[...new Set(status.pages.map((p) => p.metaSection))].join(', ')}).
-            </>
-          )}
-          {status.state === 'error' && `Data pipeline error: ${status.message}`}
-        </div>
+        <p className="lede">{children}</p>
       </div>
     </main>
   );
