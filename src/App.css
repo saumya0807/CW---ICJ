@@ -70,6 +70,14 @@
   .sidebar {
     position: static;
   }
+  .startover {
+    top: 12px;
+    right: 16px;
+  }
+  .crumbs,
+  .page__title {
+    padding-right: 88px;
+  }
 }
 .sidebar__brand {
   margin: 0 4px 0.3rem;
@@ -187,15 +195,9 @@
 
 /* ---------- main panel ---------- */
 .main {
-  padding: 28px 32px 36px;
+  position: relative;
+  padding: 16px 32px 32px;
   min-width: 0;
-}
-.main__bar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
 }
 .crumbs {
   display: flex;
@@ -203,6 +205,8 @@
   align-items: center;
   gap: 6px;
   min-width: 0;
+  margin-bottom: 16px;
+  padding-right: 100px; /* clear the absolutely-positioned Start over */
 }
 .crumbs__item {
   display: inline-flex;
@@ -231,9 +235,11 @@
   font-weight: 500;
 }
 .startover {
-  flex: none;
-  margin-left: auto;
-  background: none;
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  z-index: 1;
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 6px 12px;
@@ -250,6 +256,7 @@
 /* ---------- page ---------- */
 .page__title {
   margin: 0 0 14px;
+  padding-right: 100px; /* clear the absolutely-positioned Start over */
   font-size: 1.7rem;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -300,22 +307,30 @@
 /* ---------- media ---------- */
 .media {
   position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto; /* centered in the panel */
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
   background: var(--media-bg);
-  aspect-ratio: 16 / 9;
 }
 .media--empty {
+  min-height: 180px;
   display: grid;
   place-items: center;
   color: var(--muted);
   font-size: 0.85rem;
 }
+/* The frame is the scroll container: short images sit at their natural height;
+   a tall image fills the width and scrolls vertically inside this box. */
 .media__frame {
   display: block;
   width: 100%;
-  height: 100%;
+  max-height: clamp(240px, calc(100dvh - 320px), 680px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
   margin: 0;
   padding: 0;
   border: none;
@@ -325,12 +340,10 @@
 .media__frame img {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: auto;
 }
 .media__fallback {
-  width: 100%;
-  height: 100%;
+  min-height: 260px;
   display: grid;
   place-content: center;
   gap: 6px;

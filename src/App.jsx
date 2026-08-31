@@ -50,12 +50,10 @@ function Walkthrough({ pages }) {
         onJump={jumpTo}
       />
       <main className="main">
-        <div className="main__bar">
-          <Breadcrumb trail={trail} pages={pages} onCrumb={truncateTo} />
-          <button type="button" className="startover" onClick={startOver}>
-            Start over
-          </button>
-        </div>
+        <button type="button" className="startover" onClick={startOver}>
+          Start over
+        </button>
+        <Breadcrumb trail={trail} pages={pages} onCrumb={truncateTo} />
         <PageView page={page} pages={pages} onCta={go} />
       </main>
     </div>
