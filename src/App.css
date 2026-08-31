@@ -39,16 +39,14 @@
 
 /* ---------- app shell ---------- */
 .app {
-  min-height: 100%;
-  display: grid;
-  grid-template-columns: 288px 1fr;
+  min-height: 100dvh;
+  display: flex;
   gap: 20px;
   padding: 20px;
-  align-items: start;
 }
 @media (max-width: 820px) {
   .app {
-    grid-template-columns: 1fr;
+    display: block;
   }
 }
 
@@ -62,13 +60,23 @@
 
 /* ---------- sidebar ---------- */
 .sidebar {
+  flex: 0 0 288px;
+  align-self: flex-start;
   padding: 20px 16px;
   position: sticky;
   top: 20px;
+  /* A long nav scrolls inside the sidebar instead of stretching the page. */
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 @media (max-width: 820px) {
   .sidebar {
     position: static;
+    width: auto;
+    margin-bottom: 20px;
+    max-height: none;
+    overflow: visible;
   }
   .startover {
     top: 12px;
@@ -195,9 +203,12 @@
 
 /* ---------- main panel ---------- */
 .main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   position: relative;
   padding: 16px 32px 32px;
-  min-width: 0;
 }
 .crumbs {
   display: flex;
@@ -254,6 +265,12 @@
 }
 
 /* ---------- page ---------- */
+.page {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 .page__title {
   margin: 0 0 14px;
   padding-right: 100px; /* clear the absolutely-positioned Start over */
@@ -305,7 +322,15 @@
 }
 
 /* ---------- media ---------- */
+/* .media grows to fill whatever vertical space is left in the panel; the
+   max-height is only a ceiling so a very tall image scrolls inside the frame
+   instead of stretching the page. */
 .media {
+  flex: 1 1 auto;
+  min-height: 260px;
+  max-height: calc(100dvh - 272px);
+  display: flex;
+  flex-direction: column;
   position: relative;
   width: 100%;
   max-width: 960px;
@@ -315,22 +340,26 @@
   overflow: hidden;
   background: var(--media-bg);
 }
+/* No image yet: stay a compact band rather than a full-height grey slab. */
 .media--empty {
+  flex: 0 0 auto;
   min-height: 180px;
   display: grid;
   place-items: center;
   color: var(--muted);
   font-size: 0.85rem;
 }
-/* The frame is the scroll container: short images sit at their natural height;
-   a tall image fills the width and scrolls vertically inside this box. */
+/* The frame is the scroll container. A short image is centred (margin:auto);
+   a tall one fills the width and scrolls vertically inside this box. */
 .media__frame {
-  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
   width: 100%;
-  max-height: clamp(240px, calc(100dvh - 320px), 680px);
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
+  scrollbar-gutter: stable;
   margin: 0;
   padding: 0;
   border: none;
@@ -341,11 +370,12 @@
   display: block;
   width: 100%;
   height: auto;
+  margin: auto; /* centres when shorter than the frame; 0 when it overflows */
 }
 .media__fallback {
-  min-height: 260px;
+  margin: auto;
   display: grid;
-  place-content: center;
+  place-items: center;
   gap: 6px;
   color: var(--muted);
   font-size: 0.8rem;
@@ -388,4 +418,16 @@
   padding: 3px 8px;
   font-size: 0.72rem;
   color: var(--muted);
+}
+
+/* Mobile: the page scrolls anyway, so don't force the media to fill height;
+   just shrink-wrap the image and cap very tall ones at 70% of the screen. */
+@media (max-width: 820px) {
+  .media {
+    min-height: 0;
+    max-height: none;
+  }
+  .media__frame {
+    max-height: 70dvh;
+  }
 }
