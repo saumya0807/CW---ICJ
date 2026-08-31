@@ -49,8 +49,13 @@ Content lives in a Google Sheet published to the web as CSV
 live app with no redeploy. The URL is in [`src/config.js`](src/config.js).
 
 One row per page. Columns: `ID`, `Meta Section`, `Event Name`, `Entry Point`
-(Y/N), `Details`, `Media` (bare filenames separated by `|`), `CTA1`&hellip;`CTA7`
-(each the `ID` of another row).
+(Y/N), `Details`, `Media` (bare filenames separated by `|`), `CTA1`&hellip;`CTA7`.
+
+Each CTA cell points at another row **by its `Event Name`** (an `ID` also works;
+`ID` wins on a clash). Match is case-insensitive. A cell that matches nothing
+renders as a disabled "&hellip; &middot; coming soon" button; an empty cell is
+skipped. Renaming a page therefore means updating the CTA cells that point to
+its old name.
 
 ## Media assets
 

@@ -1,7 +1,8 @@
+import { resolvePage } from '../nav.js';
 import MediaViewer from './MediaViewer.jsx';
 
 // The main panel: page title, body text, a row of CTA buttons, and the media.
-// A CTA whose target id isn't in the sheet yet renders disabled ("coming soon").
+// A CTA whose target isn't in the sheet yet renders disabled ("coming soon").
 export default function PageView({ page, pages, onCta }) {
   return (
     <article className="page">
@@ -9,14 +10,14 @@ export default function PageView({ page, pages, onCta }) {
       {page.details && <p className="page__details">{page.details}</p>}
 
       <div className="page__ctas">
-        {page.ctas.map((id, idx) => {
-          const target = pages.find((p) => p.id === id);
+        {page.ctas.map((ref, idx) => {
+          const target = resolvePage(pages, ref);
           return target ? (
             <button
               key={idx}
               type="button"
               className="cta"
-              onClick={() => onCta(id)}
+              onClick={() => onCta(target.id)}
             >
               {target.eventName}
             </button>
@@ -26,9 +27,9 @@ export default function PageView({ page, pages, onCta }) {
               type="button"
               className="cta cta--pending"
               disabled
-              title={`"${id}" isn't in the sheet yet`}
+              title={`"${ref}" isn't in the sheet yet`}
             >
-              {id} · coming soon
+              {ref} · coming soon
             </button>
           );
         })}

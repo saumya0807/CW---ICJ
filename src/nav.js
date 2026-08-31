@@ -33,3 +33,18 @@ export function defaultPageId(pages) {
 export function getPage(pages, id) {
   return pages.find((p) => p.id === id) || null;
 }
+
+// Resolve a CTA / nav reference to a page. The sheet links pages by Event Name,
+// but a reference may also be a row ID; ID wins on any clash. Match is
+// case-insensitive and trims surrounding whitespace. Returns null if nothing
+// matches (the CTA then renders as "coming soon").
+export function resolvePage(pages, ref) {
+  if (ref == null) return null;
+  const needle = String(ref).trim().toLowerCase();
+  if (!needle) return null;
+  return (
+    pages.find((p) => p.id.toLowerCase() === needle) ||
+    pages.find((p) => p.eventName.toLowerCase() === needle) ||
+    null
+  );
+}

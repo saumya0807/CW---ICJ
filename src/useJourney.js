@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { defaultPageId } from './nav.js';
+import { defaultPageId, resolvePage } from './nav.js';
 
 // Journey state: which page is showing, and the visited path that led there.
 // Kept in sync with the address bar (?page=<id>) and browser history so a screen
@@ -10,13 +10,14 @@ import { defaultPageId } from './nav.js';
 // - truncateTo(i): click a breadcrumb crumb       -> trail trimmed to that point
 // - startOver():  back to the default entry page  -> fresh trail
 
-function readInitial(validIds, fallback) {
+function readInitial(pages, validIds, fallback) {
   const hs = window.history.state;
   if (hs && hs.page && validIds.has(hs.page) && Array.isArray(hs.trail)) {
     return { page: hs.page, trail: hs.trail };
   }
   const requested = new URLSearchParams(window.location.search).get('page');
-  const start = requested && validIds.has(requested) ? requested : fallback;
+  const match = requested ? resolvePage(pages, requested) : null;
+  const start = match ? match.id : fallback;
   return { page: start, trail: [start] };
 }
 
@@ -24,7 +25,9 @@ export function useJourney(pages) {
   const validIds = useMemo(() => new Set(pages.map((p) => p.id)), [pages]);
   const fallback = useMemo(() => defaultPageId(pages), [pages]);
 
-  const [state, setState] = useState(() => readInitial(validIds, fallback));
+  const [state, setState] = useState(() =>
+    readInitial(pages, validIds, fallback),
+  );
 
   const stateRef = useRef(state);
   useEffect(() => {
@@ -48,12 +51,12 @@ export function useJourney(pages) {
       if (e.state && e.state.page && validIds.has(e.state.page)) {
         setState({ page: e.state.page, trail: e.state.trail || [e.state.page] });
       } else {
-        setState(readInitial(validIds, fallback));
+        setState(readInitial(pages, validIds, fallback));
       }
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
-  }, [validIds, fallback]);
+  }, [pages, validIds, fallback]);
 
   const go = useCallback(
     (id) => push({ page: id, trail: [...stateRef.current.trail, id] }),
