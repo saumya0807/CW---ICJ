@@ -60,9 +60,11 @@ its old name.
 ## Media assets
 
 Image files go in [`public/media/`](public/media/) and are committed to the repo,
-not stored in the sheet. The sheet's `Media` column holds bare filenames
-(`gmb1.png`); the app prepends `/media/`. Adding a genuinely new image needs a
-commit + redeploy; text and flow changes are instant via the sheet.
+not stored in the sheet. The sheet's `Media` column holds filenames separated by
+`|` (`GS_1.png|GS_2.png`); the app prepends `/media/`. A name with no extension
+is assumed to be `.png` (so `GS_1` resolves to `/media/GS_1.png`). Adding a
+genuinely new image needs a commit + redeploy; text and flow changes are instant
+via the sheet.
 
 ## Deploy (Vercel)
 

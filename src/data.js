@@ -36,7 +36,9 @@ export async function getPages() {
       media: (row.Media || '')
         .split('|')
         .map((s) => s.trim())
-        .filter(Boolean),
+        .filter(Boolean)
+        // Bare names get a .png default; anything with an extension is left as-is.
+        .map((name) => (/\.[a-z0-9]+$/i.test(name) ? name : `${name}.png`)),
       ctas: [1, 2, 3, 4, 5, 6, 7]
         .map((n) => (row[`CTA${n}`] || '').trim())
         .filter(Boolean),
