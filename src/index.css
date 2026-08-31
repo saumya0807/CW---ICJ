@@ -1,0 +1,31 @@
+:root {
+  /* Cambridge Wealth dark brand system */
+  --bg: #111213;
+  --surface: #151617;
+  --gold: #c9a84c;
+  --text: #f2efe6;
+  --muted: #9a978d;
+  --line: #2a2b2d;
+  --danger: #c0553d;
+
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+}
