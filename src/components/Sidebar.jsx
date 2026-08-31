@@ -3,7 +3,13 @@ import { useState } from 'react';
 // Left nav. One collapsible group per Meta Section (order from the sheet).
 // Clicking a section name teleports to its entry page; the +/- toggle just
 // opens/closes the group. The active page's group auto-opens.
-export default function Sidebar({ nav, currentId, currentSection, onJump }) {
+export default function Sidebar({
+  nav,
+  currentId,
+  currentSection,
+  onJump,
+  open: drawerOpen = false,
+}) {
   const [open, setOpen] = useState(currentSection);
 
   // When navigation lands in a different section, open that one. Adjusting
@@ -15,7 +21,7 @@ export default function Sidebar({ nav, currentId, currentSection, onJump }) {
   }
 
   return (
-    <nav className="sidebar">
+    <nav className={'sidebar' + (drawerOpen ? ' is-open' : '')}>
       <p className="sidebar__brand">Cambridge Wealth</p>
       <p className="sidebar__title">Ideal Customer Journey</p>
 

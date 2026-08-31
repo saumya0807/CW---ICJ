@@ -37,9 +37,27 @@ export default function App() {
 function Walkthrough({ pages }) {
   const nav = useMemo(() => buildNav(pages), [pages]);
   const { currentId, trail, go, jumpTo, truncateTo, startOver } = useJourney(pages);
+  const [navOpen, setNavOpen] = useState(false);
 
   const page =
     getPage(pages, currentId) || getPage(pages, trail[0]) || pages[0];
+
+  // Close the mobile nav drawer on Escape, and lock body scroll while it's open.
+  useEffect(() => {
+    if (!navOpen) return;
+    const onKey = (e) => e.key === 'Escape' && setNavOpen(false);
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [navOpen]);
+
+  const navigateAndClose = (id) => {
+    jumpTo(id);
+    setNavOpen(false);
+  };
 
   return (
     <div className="app">
@@ -47,9 +65,30 @@ function Walkthrough({ pages }) {
         nav={nav}
         currentId={page.id}
         currentSection={page.metaSection}
-        onJump={jumpTo}
+        onJump={navigateAndClose}
+        open={navOpen}
       />
+      {navOpen && (
+        <div
+          className="nav-backdrop"
+          onClick={() => setNavOpen(false)}
+          aria-hidden="true"
+        />
+      )}
       <main className="main">
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-label="Open navigation"
+          aria-expanded={navOpen}
+          onClick={() => setNavOpen(true)}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
         <button type="button" className="startover" onClick={startOver}>
           Start over
         </button>
