@@ -49,13 +49,20 @@ Content lives in a Google Sheet published to the web as CSV
 live app with no redeploy. The URL is in [`src/config.js`](src/config.js).
 
 One row per page. Columns: `ID`, `Meta Section`, `Event Name`, `Entry Point`
-(Y/N), `Details`, `Media` (bare filenames separated by `|`), `CTA1`&hellip;`CTA7`.
+(Y/N), `Details`, `Media` (bare filenames separated by `|`), then seven
+`CTAn-Copy` / `CTAn` pairs.
 
-Each CTA cell points at another row **by its `Event Name`** (an `ID` also works;
-`ID` wins on a clash). Match is case-insensitive. A cell that matches nothing
-renders as a disabled "&hellip; &middot; coming soon" button; an empty cell is
-skipped. Renaming a page therefore means updating the CTA cells that point to
-its old name.
+For each CTA pair:
+
+- `CTAn` &mdash; the row this button navigates to, referenced **by `Event Name`**
+  (an `ID` also works; `ID` wins on a clash). Case-insensitive. If it matches
+  nothing, the button renders disabled ("&hellip; &middot; coming soon"). An
+  empty `CTAn` is skipped &mdash; even if its `CTAn-Copy` is filled.
+- `CTAn-Copy` &mdash; the button label. If blank, the label falls back to the
+  target row's `Event Name`.
+
+Renaming a page therefore means updating the `CTAn` cells that point to its old
+name.
 
 ## Media assets
 

@@ -10,8 +10,9 @@ export default function PageView({ page, pages, onCta }) {
       {page.details && <p className="page__details">{page.details}</p>}
 
       <div className="page__ctas">
-        {page.ctas.map((ref, idx) => {
-          const target = resolvePage(pages, ref);
+        {page.ctas.map((cta, idx) => {
+          const target = resolvePage(pages, cta.ref);
+          const label = cta.copy || (target ? target.eventName : cta.ref);
           return target ? (
             <button
               key={idx}
@@ -19,7 +20,7 @@ export default function PageView({ page, pages, onCta }) {
               className="cta"
               onClick={() => onCta(target.id)}
             >
-              {target.eventName}
+              {label}
             </button>
           ) : (
             <button
@@ -27,9 +28,9 @@ export default function PageView({ page, pages, onCta }) {
               type="button"
               className="cta cta--pending"
               disabled
-              title={`"${ref}" isn't in the sheet yet`}
+              title={`"${cta.ref}" isn't in the sheet yet`}
             >
-              {ref} · coming soon
+              {label} · coming soon
             </button>
           );
         })}

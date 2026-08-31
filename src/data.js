@@ -6,10 +6,13 @@ import { CSV_URL } from './config.js';
 // never touch the network or the CSV format themselves.
 //
 // Returns: Promise<Page[]> where Page is
-//   { id, metaSection, eventName, entryPoint, details, media: string[], ctas: string[] }
+//   { id, metaSection, eventName, entryPoint, details, media: string[], ctas: Cta[] }
 //   - entryPoint is a boolean (sheet holds "Y"/"N")
 //   - media is a list of bare filenames, split on "|"
-//   - ctas is the list of non-empty CTA1..CTA7 cells, each an ID of another row
+//   - ctas: one { copy, ref } per CTAn column that has a non-empty ref.
+//       ref  = CTAn      -> the row to navigate to (Event Name or ID)
+//       copy = CTAn-Copy -> the button label (falls back to the target's
+//                           Event Name when blank)
 export async function getPages() {
   const res = await fetch(CSV_URL, { cache: 'no-store' });
   if (!res.ok) {
@@ -40,8 +43,11 @@ export async function getPages() {
         // Bare names get a .png default; anything with an extension is left as-is.
         .map((name) => (/\.[a-z0-9]+$/i.test(name) ? name : `${name}.png`)),
       ctas: [1, 2, 3, 4, 5, 6, 7]
-        .map((n) => (row[`CTA${n}`] || '').trim())
-        .filter(Boolean),
+        .map((n) => ({
+          copy: (row[`CTA${n}-Copy`] || '').trim(),
+          ref: (row[`CTA${n}`] || '').trim(),
+        }))
+        .filter((cta) => cta.ref),
     }))
     .filter((row) => row.id);
 }
