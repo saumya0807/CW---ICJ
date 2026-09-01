@@ -9,6 +9,8 @@ export default function PageView({ page, pages, onCta }) {
       <h1 className="page__title">{page.eventName}</h1>
       {page.details && <p className="page__details">{page.details}</p>}
 
+      <MediaViewer key={page.id} images={page.media} />
+
       <div className="page__ctas">
         {page.ctas.map((cta, idx) => {
           const target = resolvePage(pages, cta.ref);
@@ -40,8 +42,6 @@ export default function PageView({ page, pages, onCta }) {
           </p>
         )}
       </div>
-
-      <MediaViewer key={page.id} images={page.media} />
     </article>
   );
 }
