@@ -11,3 +11,9 @@ export const CSV_URL =
 // Media filenames from the sheet are resolved against this path.
 // Files live in /public/media/ and are served from the site root.
 export const MEDIA_BASE = '/media/';
+
+// Soft access gate shown before the walkthrough loads.
+// NOT security: this value ships in the client bundle and is readable in
+// devtools. It only deters casual visitors. For real protection use Vercel's
+// project-level Password Protection (Settings > Deployment Protection).
+export const ACCESS_PASSWORD = 'CW2020';

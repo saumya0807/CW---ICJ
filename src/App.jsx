@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getPages } from './data.js';
+import { ACCESS_PASSWORD } from './config.js';
 import { buildNav, getPage } from './nav.js';
 import { useJourney } from './useJourney.js';
 import Sidebar from './components/Sidebar.jsx';
@@ -7,7 +8,67 @@ import Breadcrumb from './components/Breadcrumb.jsx';
 import PageView from './components/PageView.jsx';
 import './App.css';
 
+const UNLOCK_KEY = 'icj-unlocked';
+
 export default function App() {
+  const [unlocked, setUnlocked] = useState(() => {
+    try {
+      return localStorage.getItem(UNLOCK_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  if (!unlocked) return <PasswordGate onUnlock={() => setUnlocked(true)} />;
+  return <Loader />;
+}
+
+function PasswordGate({ onUnlock }) {
+  const [value, setValue] = useState('');
+  const [error, setError] = useState(false);
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (value === ACCESS_PASSWORD) {
+      try {
+        localStorage.setItem(UNLOCK_KEY, '1');
+      } catch {
+        /* private mode — unlock for this session only */
+      }
+      onUnlock();
+    } else {
+      setError(true);
+    }
+  };
+
+  return (
+    <main className="shell">
+      <form className="card gate" onSubmit={submit}>
+        <p className="eyebrow">Cambridge Wealth</p>
+        <h1>ICJ Interactive Walkthrough</h1>
+        <p className="lede">Enter the access password to continue.</p>
+        <input
+          type="password"
+          className="gate__input"
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setError(false);
+          }}
+          placeholder="Password"
+          aria-label="Access password"
+          autoFocus
+        />
+        {error && <p className="gate__error">Incorrect password.</p>}
+        <button type="submit" className="gate__submit">
+          Enter
+        </button>
+      </form>
+    </main>
+  );
+}
+
+function Loader() {
   const [load, setLoad] = useState({ state: 'loading' });
 
   useEffect(() => {

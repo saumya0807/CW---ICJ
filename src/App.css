@@ -37,6 +37,50 @@
   line-height: 1.6;
 }
 
+/* ---------- password gate ---------- */
+.gate {
+  display: flex;
+  flex-direction: column;
+}
+.gate .lede {
+  margin-bottom: 1.25rem;
+}
+.gate__input {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.gate__input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.gate__error {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--danger);
+}
+.gate__submit {
+  margin-top: 1rem;
+  align-self: flex-start;
+  padding: 8px 20px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--surface);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.gate__submit:hover {
+  opacity: 0.9;
+}
+
 /* ---------- app shell ---------- */
 /* Desktop: two fixed-height columns. Mobile overrides are consolidated in one
    block at the end of this file so the cascade order is predictable. */
