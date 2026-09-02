@@ -10,6 +10,22 @@ import { defaultPageId, resolvePage } from './nav.js';
 // - truncateTo(i): click a breadcrumb crumb       -> trail trimmed to that point
 // - startOver():  back to the default entry page  -> fresh trail
 
+// pushState / replaceState throw in some restricted contexts (notably a
+// standalone file:// page). Fall back to just updating the query string so the
+// app keeps working; Back/Forward degrade but navigation still functions.
+function syncUrl(method, next) {
+  const url = `?page=${encodeURIComponent(next.page)}`;
+  try {
+    window.history[method](next, '', url);
+  } catch {
+    try {
+      window.history[method](next, '');
+    } catch {
+      /* give up on history sync */
+    }
+  }
+}
+
 function readInitial(pages, validIds, fallback) {
   const hs = window.history.state;
   if (hs && hs.page && validIds.has(hs.page) && Array.isArray(hs.trail)) {
@@ -35,14 +51,13 @@ export function useJourney(pages) {
   }, [state]);
 
   const push = useCallback((next) => {
-    window.history.pushState(next, '', `?page=${encodeURIComponent(next.page)}`);
+    syncUrl('pushState', next);
     setState(next);
   }, []);
 
   // Normalise the address bar on first mount without adding a history entry.
   useEffect(() => {
-    const s = stateRef.current;
-    window.history.replaceState(s, '', `?page=${encodeURIComponent(s.page)}`);
+    syncUrl('replaceState', stateRef.current);
   }, []);
 
   // Back / Forward.

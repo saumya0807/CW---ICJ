@@ -10,7 +10,9 @@ export const CSV_URL =
 
 // Media filenames from the sheet are resolved against this path.
 // Files live in /public/media/ and are served from the site root.
-export const MEDIA_BASE = '/media/';
+// The single-file build overrides this to an absolute URL (VITE_MEDIA_BASE) so
+// a standalone .html can still load the images from the deployed site.
+export const MEDIA_BASE = import.meta.env.VITE_MEDIA_BASE || '/media/';
 
 // Soft access gate shown before the walkthrough loads.
 // NOT security: this value ships in the client bundle and is readable in
