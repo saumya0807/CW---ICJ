@@ -13,6 +13,7 @@ import { copyFile } from 'node:fs/promises';
 
 process.env.SINGLEFILE = '1';
 process.env.VITE_MEDIA_BASE = 'https://cw-icj.vercel.app/media/';
+process.env.VITE_CSV_URL = 'https://cw-icj.vercel.app/api/sheet';
 
 await build();
 await copyFile('dist-single/index.html', 'ICJ-Walkthrough.html');

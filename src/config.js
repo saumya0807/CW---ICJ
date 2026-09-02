@@ -4,8 +4,11 @@
 // (File > Share > Publish to web > entire sheet > CSV).
 // Editing rows in that sheet updates the live app with no redeploy.
 //
-// To point the walkthrough at a different sheet, change only this URL.
+// The single-file build overrides this (VITE_CSV_URL) to hit /api/sheet on the
+// deployment instead — the published Google URL redirects, and the redirect hop
+// has no CORS header, which a file:// page can't follow.
 export const CSV_URL =
+  import.meta.env.VITE_CSV_URL ||
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1TXoLGg2zDVw0OaL146Lx7pw4UY2hXNY_8vv9nA0oF-mZiduu5QxZaNRGSVDH7M2a_PCOKHr2W8i0/pub?gid=0&single=true&output=csv';
 
 // Media filenames from the sheet are resolved against this path.
