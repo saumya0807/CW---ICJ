@@ -95,10 +95,19 @@ function Loader() {
   return <Walkthrough pages={load.pages} />;
 }
 
+const NAV_COLLAPSED_KEY = 'icj-nav-collapsed';
+
 function Walkthrough({ pages }) {
   const nav = useMemo(() => buildNav(pages), [pages]);
   const { currentId, trail, go, jumpTo, truncateTo, startOver } = useJourney(pages);
-  const [navOpen, setNavOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false); // mobile off-canvas drawer
+  const [navCollapsed, setNavCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem(NAV_COLLAPSED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  }); // desktop: sidebar hidden, main takes the full width
 
   const page =
     getPage(pages, currentId) || getPage(pages, trail[0]) || pages[0];
@@ -120,14 +129,36 @@ function Walkthrough({ pages }) {
     setNavOpen(false);
   };
 
+  const collapseNav = () => {
+    setNavCollapsed(true);
+    try {
+      localStorage.setItem(NAV_COLLAPSED_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+  };
+
+  // Same control shows the nav whether it's off-canvas (mobile) or collapsed
+  // (desktop) — only the relevant one has any visible effect in each case.
+  const showNav = () => {
+    setNavOpen(true);
+    setNavCollapsed(false);
+    try {
+      localStorage.setItem(NAV_COLLAPSED_KEY, '0');
+    } catch {
+      /* ignore */
+    }
+  };
+
   return (
-    <div className="app">
+    <div className={'app' + (navCollapsed ? ' nav-collapsed' : '')}>
       <Sidebar
         nav={nav}
         currentId={page.id}
         currentSection={page.metaSection}
         onJump={navigateAndClose}
         open={navOpen}
+        onCollapse={collapseNav}
       />
       {navOpen && (
         <div
@@ -140,9 +171,8 @@ function Walkthrough({ pages }) {
         <button
           type="button"
           className="nav-toggle"
-          aria-label="Open navigation"
-          aria-expanded={navOpen}
-          onClick={() => setNavOpen(true)}
+          aria-label="Show navigation"
+          onClick={showNav}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <line x1="3" y1="6" x2="21" y2="6" />

@@ -111,6 +111,29 @@
   overflow-y: auto;
   scrollbar-width: thin;
 }
+.sidebar__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.sidebar__collapse {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 2px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.sidebar__collapse:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
 .sidebar__brand {
   margin: 0 4px 0.3rem;
   text-transform: uppercase;
@@ -289,12 +312,38 @@
   border-color: var(--accent);
 }
 
-/* Mobile nav drawer trigger + backdrop (shown only under the mobile breakpoint) */
+/* Shows the nav when it isn't in the flow: the mobile drawer trigger, and
+   (desktop) the button that restores a collapsed sidebar. Hidden by default;
+   each context turns it on. */
 .nav-toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+.nav-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .nav-backdrop {
   display: none;
+}
+
+/* Desktop: collapsing the sidebar hides it and hands its width to .main. */
+@media (min-width: 821px) {
+  .app.nav-collapsed .sidebar {
+    display: none;
+  }
+  .app.nav-collapsed .nav-toggle {
+    display: inline-flex;
+  }
 }
 
 /* ---------- page ---------- */
@@ -328,25 +377,25 @@
   margin-top: 20px; /* sits below the media now */
 }
 .cta {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  padding: 10px 18px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 11px 22px;
   font: inherit;
   font-size: 0.86rem;
-  font-weight: 500;
-  color: var(--text);
+  font-weight: 600;
+  color: var(--surface);
   cursor: pointer;
-  transition: border-color 0.12s, color 0.12s;
+  transition: background-color 0.12s, border-color 0.12s;
 }
 .cta:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
 }
 .cta--pending,
 .cta--pending:hover {
-  border-style: dashed;
-  border-color: var(--line);
+  background: none;
+  border: 1px dashed var(--line);
   color: var(--muted);
   cursor: not-allowed;
 }
@@ -466,6 +515,12 @@
     overflow: visible;
   }
 
+  /* The permanent-collapse control is a desktop-only concept; the drawer
+     already closes via backdrop tap, Escape, or picking a page. */
+  .sidebar__collapse {
+    display: none;
+  }
+
   /* Sidebar becomes an off-canvas drawer. */
   .sidebar {
     position: fixed;
@@ -494,20 +549,6 @@
   }
   .nav-toggle {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    margin-bottom: 12px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    color: var(--text);
-    cursor: pointer;
-  }
-  .nav-toggle:hover {
-    border-color: var(--accent);
-    color: var(--accent);
   }
 
   .startover {

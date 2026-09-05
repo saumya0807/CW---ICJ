@@ -9,6 +9,7 @@ export default function Sidebar({
   currentSection,
   onJump,
   open: drawerOpen = false,
+  onCollapse,
 }) {
   const [open, setOpen] = useState(currentSection);
 
@@ -22,8 +23,23 @@ export default function Sidebar({
 
   return (
     <nav className={'sidebar' + (drawerOpen ? ' is-open' : '')}>
-      <p className="sidebar__brand">Cambridge Wealth</p>
-      <p className="sidebar__title">Ideal Customer Journey</p>
+      <div className="sidebar__head">
+        <div>
+          <p className="sidebar__brand">Cambridge Wealth</p>
+          <p className="sidebar__title">Ideal Customer Journey</p>
+        </div>
+        <button
+          type="button"
+          className="sidebar__collapse"
+          aria-label="Collapse navigation"
+          title="Collapse navigation"
+          onClick={onCollapse}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polyline points="15 6 9 12 15 18" />
+          </svg>
+        </button>
+      </div>
 
       <ul className="sidebar__list">
         {nav.map((group) => {

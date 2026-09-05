@@ -3,7 +3,8 @@
   --bg: #f7f4ef; /* warm page background */
   --surface: #ffffff; /* nav + main panels */
   --surface-2: #faf7f2; /* expanded nav group */
-  --accent: #a1734d; /* active states (brown) */
+  --accent: #a1734d; /* active states (brown), and the default CTA fill */
+  --accent-dark: #86603f; /* CTA hover */
   --text: #2b2a28; /* primary text */
   --muted: #8b8781; /* secondary text */
   --line: #e7e2d9; /* borders / dividers */
