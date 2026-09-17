@@ -7,9 +7,10 @@
 // The single-file build overrides this (VITE_CSV_URL) to hit /api/sheet on the
 // deployment instead — the published Google URL redirects, and the redirect hop
 // has no CORS header, which a file:// page can't follow.
+// V2 sheet — adds an Event Sub Section tier under Event Name (see nav.js).
 export const CSV_URL =
   import.meta.env.VITE_CSV_URL ||
-  'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1TXoLGg2zDVw0OaL146Lx7pw4UY2hXNY_8vv9nA0oF-mZiduu5QxZaNRGSVDH7M2a_PCOKHr2W8i0/pub?gid=0&single=true&output=csv';
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSKjImH8rWrStR4dwR1Z6aGEs7uIT3ngazjMPJ_gZSRdeHmqJnqGdz3Op0TGf2fWEo1gtXUcch9_HER/pub?gid=2020900441&single=true&output=csv';
 
 // Media filenames from the sheet are resolved against this path.
 // Files live in /public/media/ and are served from the site root.

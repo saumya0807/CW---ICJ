@@ -248,6 +248,86 @@
   padding: 1px 4px;
 }
 
+/* Tier 2 (Event Name) — nested one level inside .navgroup__pages. */
+.eventgroup__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-left: 2px solid var(--line);
+}
+.eventgroup__head.is-current {
+  border-left-color: var(--muted);
+}
+.eventgroup__name {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+}
+.eventgroup__name:hover {
+  color: var(--accent);
+}
+.eventgroup__name.is-active {
+  color: var(--accent);
+}
+.eventgroup__head.is-current .eventgroup__name {
+  color: var(--accent);
+}
+.eventgroup__toggle {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.eventgroup__toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Tier 3 (Event Sub Section) — the actual pages, nested once more. */
+.eventgroup__subs {
+  list-style: none;
+  margin: 0 0 4px;
+  padding: 0 0 0 12px;
+}
+.eventgroup__sub {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-left: 2px solid var(--line);
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.eventgroup__sub:hover {
+  color: var(--text);
+  border-left-color: var(--muted);
+}
+.eventgroup__sub.is-active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
 /* ---------- main panel ---------- */
 .main {
   flex: 1 1 auto;

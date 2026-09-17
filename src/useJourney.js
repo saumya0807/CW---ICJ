@@ -37,9 +37,9 @@ function readInitial(pages, validIds, fallback) {
   return { page: start, trail: [start] };
 }
 
-export function useJourney(pages) {
+export function useJourney(pages, states) {
   const validIds = useMemo(() => new Set(pages.map((p) => p.id)), [pages]);
-  const fallback = useMemo(() => defaultPageId(pages), [pages]);
+  const fallback = useMemo(() => defaultPageId(states), [states]);
 
   const [state, setState] = useState(() =>
     readInitial(pages, validIds, fallback),

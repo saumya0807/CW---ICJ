@@ -97,9 +97,15 @@ function Loader() {
 
 const NAV_COLLAPSED_KEY = 'icj-nav-collapsed';
 
-function Walkthrough({ pages }) {
-  const nav = useMemo(() => buildNav(pages), [pages]);
-  const { currentId, trail, go, jumpTo, truncateTo, startOver } = useJourney(pages);
+function Walkthrough({ pages: rawPages }) {
+  // states: the 3-tier nav tree. pages: rawPages plus one synthetic "menu"
+  // page per state — everything below (routing, CTAs, breadcrumb) uses this
+  // augmented list so a menu page is addressable like any other.
+  const { states, pages } = useMemo(() => buildNav(rawPages), [rawPages]);
+  const { currentId, trail, go, jumpTo, truncateTo, startOver } = useJourney(
+    pages,
+    states,
+  );
   const [navOpen, setNavOpen] = useState(false); // mobile off-canvas drawer
   const [navCollapsed, setNavCollapsed] = useState(() => {
     try {
@@ -153,9 +159,10 @@ function Walkthrough({ pages }) {
   return (
     <div className={'app' + (navCollapsed ? ' nav-collapsed' : '')}>
       <Sidebar
-        nav={nav}
+        states={states}
         currentId={page.id}
         currentSection={page.metaSection}
+        currentEventName={page.eventName}
         onJump={navigateAndClose}
         open={navOpen}
         onCollapse={collapseNav}

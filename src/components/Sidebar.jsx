@@ -1,24 +1,34 @@
 import { useState } from 'react';
 
-// Left nav. One collapsible group per Meta Section (order from the sheet).
-// Clicking a section name teleports to its entry page; the +/- toggle just
-// opens/closes the group. The active page's group auto-opens.
+// Left nav, three tiers: State > Event Name > Event Sub Section.
+// - State / Event Name: click the name to jump (State -> its menu page,
+//   Event Name -> its first Sub Section); the +/- toggle only expands.
+// - Event Sub Section: the leaf, click to go there directly.
+// An Event Name with a single Sub Section has nothing to expand, so it
+// renders with no toggle and no nested list — clicking it goes straight in.
+// The path to whatever page is current auto-expands; only one branch is
+// open per tier at a time (an accordion), and toggling one doesn't disturb
+// where the user is unless they navigate.
 export default function Sidebar({
-  nav,
+  states,
   currentId,
   currentSection,
+  currentEventName,
   onJump,
   open: drawerOpen = false,
   onCollapse,
 }) {
-  const [open, setOpen] = useState(currentSection);
+  const [openState, setOpenState] = useState(currentSection);
+  const [openEventName, setOpenEventName] = useState(currentEventName);
 
-  // When navigation lands in a different section, open that one. Adjusting
-  // state during render (rather than in an effect) avoids a wasted paint.
-  const [seenSection, setSeenSection] = useState(currentSection);
-  if (currentSection !== seenSection) {
-    setSeenSection(currentSection);
-    setOpen(currentSection);
+  // Adjusting state during render (rather than in an effect) avoids a
+  // wasted paint. Only re-syncs when the user actually navigates — a plain
+  // +/- toggle click doesn't touch currentId, so it's left alone.
+  const [seenId, setSeenId] = useState(currentId);
+  if (currentId !== seenId) {
+    setSeenId(currentId);
+    setOpenState(currentSection);
+    setOpenEventName(currentEventName);
   }
 
   return (
@@ -42,56 +52,100 @@ export default function Sidebar({
       </div>
 
       <ul className="sidebar__list">
-        {nav.map((group) => {
-          const isOpen = open === group.section;
+        {states.map((state) => {
+          const isStateOpen = openState === state.title;
           return (
             <li
-              key={group.section}
-              className={'navgroup' + (isOpen ? ' is-open' : '')}
+              key={state.title}
+              className={'navgroup' + (isStateOpen ? ' is-open' : '')}
             >
               <div
                 className={
                   'navgroup__head' +
-                  (group.section === currentSection ? ' is-current' : '')
+                  (state.title === currentSection ? ' is-current' : '')
                 }
               >
                 <button
                   type="button"
                   className="navgroup__name"
-                  onClick={() => onJump(group.entryId)}
+                  onClick={() => onJump(state.entryId)}
                 >
-                  {group.section}
+                  {state.title}
                 </button>
                 <button
                   type="button"
                   className="navgroup__toggle"
-                  aria-label={isOpen ? 'Collapse section' : 'Expand section'}
-                  aria-expanded={isOpen}
-                  onClick={() => setOpen(isOpen ? null : group.section)}
+                  aria-label={isStateOpen ? 'Collapse state' : 'Expand state'}
+                  aria-expanded={isStateOpen}
+                  onClick={() => setOpenState(isStateOpen ? null : state.title)}
                 >
-                  {isOpen ? '–' : '+'}
+                  {isStateOpen ? '–' : '+'}
                 </button>
               </div>
 
-              {isOpen && (
+              {isStateOpen && (
                 <ul className="navgroup__pages">
-                  {group.pages.map((page) => (
-                    <li key={page.id}>
-                      <button
-                        type="button"
-                        className={
-                          'navgroup__page' +
-                          (page.id === currentId ? ' is-active' : '')
-                        }
-                        onClick={() => onJump(page.id)}
-                      >
-                        <span>{page.eventName}</span>
-                        {page.entryPoint && (
-                          <span className="navgroup__entry">entry</span>
+                  {state.eventNames.map((evt) => {
+                    const isLeaf = evt.subSections.length <= 1;
+                    const isEvtOpen = !isLeaf && openEventName === evt.name;
+                    return (
+                      <li key={evt.name}>
+                        <div
+                          className={
+                            'eventgroup__head' +
+                            (evt.name === currentEventName ? ' is-current' : '')
+                          }
+                        >
+                          <button
+                            type="button"
+                            className={
+                              'eventgroup__name' +
+                              (isLeaf && evt.entryId === currentId
+                                ? ' is-active'
+                                : '')
+                            }
+                            onClick={() => onJump(evt.entryId)}
+                          >
+                            {evt.name}
+                          </button>
+                          {!isLeaf && (
+                            <button
+                              type="button"
+                              className="eventgroup__toggle"
+                              aria-label={
+                                isEvtOpen ? 'Collapse event' : 'Expand event'
+                              }
+                              aria-expanded={isEvtOpen}
+                              onClick={() =>
+                                setOpenEventName(isEvtOpen ? null : evt.name)
+                              }
+                            >
+                              {isEvtOpen ? '–' : '+'}
+                            </button>
+                          )}
+                        </div>
+
+                        {isEvtOpen && (
+                          <ul className="eventgroup__subs">
+                            {evt.subSections.map((page) => (
+                              <li key={page.id}>
+                                <button
+                                  type="button"
+                                  className={
+                                    'eventgroup__sub' +
+                                    (page.id === currentId ? ' is-active' : '')
+                                  }
+                                  onClick={() => onJump(page.id)}
+                                >
+                                  {page.title}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
                         )}
-                      </button>
-                    </li>
-                  ))}
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </li>

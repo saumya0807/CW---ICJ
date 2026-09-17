@@ -3,18 +3,20 @@ import MediaViewer from './MediaViewer.jsx';
 
 // The main panel: page title, body text, a row of CTA buttons, and the media.
 // A CTA whose target isn't in the sheet yet renders disabled ("coming soon").
+// Hub pages (a State's menu of its Event Names) skip the media area entirely
+// rather than showing an empty placeholder — they never have media.
 export default function PageView({ page, pages, onCta }) {
   return (
     <article className="page">
-      <h1 className="page__title">{page.eventName}</h1>
+      <h1 className="page__title">{page.title}</h1>
       {page.details && <p className="page__details">{page.details}</p>}
 
-      <MediaViewer key={page.id} images={page.media} />
+      {!page.isHub && <MediaViewer key={page.id} images={page.media} />}
 
       <div className="page__ctas">
         {page.ctas.map((cta, idx) => {
           const target = resolvePage(pages, cta.ref);
-          const label = cta.copy || (target ? target.eventName : cta.ref);
+          const label = cta.copy || (target ? target.title : cta.ref);
           return target ? (
             <button
               key={idx}

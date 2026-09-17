@@ -7,7 +7,7 @@ export default function Breadcrumb({ trail, pages, onCrumb }) {
 
   const nameOf = (id) => {
     const page = pages.find((p) => p.id === id);
-    return page ? page.eventName : id;
+    return page ? page.title : id;
   };
 
   return (
