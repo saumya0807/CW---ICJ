@@ -6,8 +6,10 @@
 // has somewhere real to land when it's clicked.
 //
 // Returns { states, pages }:
-//   - states: [{ id, title, entryId, eventNames: [{ name, entryId, subSections }] }]
+//   - states: [{ id, title, statement, entryId, eventNames: [{ name, entryId, subSections }] }]
 //       id / entryId on a state are the same value: its own hub page id.
+//       statement is the State's intro line, from the first row of its
+//       rows that has a non-empty "State Statement" cell (blank if none do).
 //       eventNames[].entryId is the id of its first Sub Section.
 //   - pages: the sheet rows PLUS one synthetic hub page per state, appended
 //       at the end. Everything downstream (routing, CTA resolution, the
@@ -20,9 +22,19 @@ export function buildNav(pages) {
   pages.forEach((page) => {
     let state = byState.get(page.metaSection);
     if (!state) {
-      state = { title: page.metaSection, eventNames: [], byEventName: new Map() };
+      state = {
+        title: page.metaSection,
+        statement: '',
+        eventNames: [],
+        byEventName: new Map(),
+      };
       byState.set(page.metaSection, state);
       states.push(state);
+    }
+    // Filled on whichever row happens to carry it — a State has no row of
+    // its own, so the statement rides along on any of its member rows.
+    if (!state.statement && page.stateStatement) {
+      state.statement = page.stateStatement;
     }
     let evt = state.byEventName.get(page.eventName);
     if (!evt) {
@@ -50,7 +62,7 @@ export function buildNav(pages) {
       eventSubSection: '',
       title: state.title,
       entryPoint: false,
-      details: '',
+      details: state.statement,
       media: [],
       isHub: true,
       // Each button is one Event Name; clicking it jumps to that name's

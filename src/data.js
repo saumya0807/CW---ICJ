@@ -7,7 +7,7 @@ import { CSV_URL } from './config.js';
 //
 // Returns: Promise<Page[]> where Page is
 //   { id, metaSection, eventName, eventSubSection, title, entryPoint,
-//     details, media: string[], ctas: Cta[] }
+//     details, stateStatement, media: string[], ctas: Cta[] }
 //   - metaSection / eventName / eventSubSection are the three nav tiers
 //     (State / Event Name / Event Sub Section) — see nav.js for how they're
 //     grouped into a tree, and for the synthetic State "menu" pages
@@ -49,6 +49,9 @@ export async function getPages() {
         title: eventSubSection || eventName,
         entryPoint: /^y$/i.test((row['Entry Point'] || '').trim()),
         details: row.Details || '',
+        // Optional, filled on any one row of a State's rows — the intro
+        // line shown on that State's landing (hub) page. See nav.js.
+        stateStatement: (row['State Statement'] || '').trim(),
         media: (row.Media || '')
           .split('|')
           .map((s) => s.trim())
